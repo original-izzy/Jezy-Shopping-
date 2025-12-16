@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jezy Shopping - Mode & Élégance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #FFD700;
+            --accent: #8B4513;
+            --background: #F8F8F8;
+            --text: #1F2937;
+            --card-bg: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+        
+        .heading-font {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #333333;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #FFC000;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-accent:hover {
+            background-color: #7A3A10;
+        }
+        
+        .btn-danger {
+            background-color: #EF4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #DC2626;
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background-color: rgba(242, 242, 242, 0.5);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 85vh;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .quantity-selector input {
+            width: 50px;
+            text-align: center;
+        }
+        
+        /* Animation for cart notification */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+        
+        .bounce {
+            animation: bounce 1s;
+        }
+        
+        /* Admin sidebar */
+        .admin-sidebar {
+            transition: all 0.3s ease;
+            height: calc(100vh - 64px);
+        }
+        
+        .admin-content {
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                height: 100vh;
+                z-index: 50;
+                width: 80%;
+            }
+            
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0 !important;
+            }
+            
+            .hero-section {
+                height: 65vh;
+            }
+        }
+        
+        /* Form styles */
+        .form-input {
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* Table styles */
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .admin-table th {
+            background-color: #F3F4F6;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        
+        .admin-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .admin-table tr:hover td {
+            background-color: #F9FAFB;
+        }
+        
+        /* Image upload preview */
+        .image-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .image-preview {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100px;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(239, 68, 68, 0.8);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Logo styling */
+        .logo-container {
+            background: linear-gradient(135deg, #000000, #434343);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        /* Cart sidebar */
+        .cart-sidebar {
+            transition: all 0.3s ease;
+            transform: translateX(100%);
+            background-color: var(--card-bg);
+        }
+        
+        .cart-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Product price badge */
+        .price-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, var(--secondary), #FFC000);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Improved product card */
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 240px;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        /* Order modal */
+        .order-modal {
+            transition: all 0.3s ease;
+            transform: scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .order-modal.active {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Admin improvements */
+        .admin-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        /* Stats cards */
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card.primary {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+        }
+        
+        .stat-card.success {
+            background: linear-gradient(135deg, #065f46, #10b981);
+            color: white;
+        }
+        
+        .stat-card.warning {
+            background: linear-gradient(135deg, #92400e, #f59e0b);
+            color: white;
+        }
+        
+        .stat-card.danger {
+            background: linear-gradient(135deg, #991b1b, #ef4444);
+            color: white;
+        }
+        
+        /* Mobile improvements */
+        @media (max-width: 640px) {
+            .product-image-container {
+                height: 200px;
+            }
+            
+            .admin-table {
+                font-size: 0.875rem;
+            }
+            
+            .admin-table th, .admin-table td {
+                padding: 8px 12px;
+            }
+        }
+        
+        /* Decorative elements */
+        .fashion-icon {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background-color: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* ===== CORRECTIONS RESPONSIVE POUR IPHONE ===== */
+        
+        /* Corrections générales pour mobile */
+        @media (max-width: 768px) {
+            /* Header mobile */
+            header .container {
+                padding: 0.75rem 1rem;
+            }
+            
+            .logo-container {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .logo-container + div h1 {
+                font-size: 1.1rem;
+            }
+            
+            .logo-container + div p {
+                font-size: 0.7rem;
+            }
+            
+            /* Hero section mobile */
+            .hero-section {
+                height: 60vh;
+                padding: 0 1rem;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem !important;
+                line-height: 1.2;
+            }
+            
+            .hero-section h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .hero-section p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .hero-section .btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            /* Sections générales */
+            section {
+                padding: 3rem 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            /* Grille produits mobile */
+            #products-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem;
+                padding: 0 0.5rem;
+            }
+            
+            .product-card {
+                margin: 0 auto;
+                max-width: 100%;
+            }
+            
+            .product-image-container {
+                height: 200px;
+            }
+            
+            /* Features section */
+            .grid.grid-cols-1.md\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            /* About section */
+            .flex-col.md\\:flex-row {
+                flex-direction: column;
+            }
+            
+            .md\\:w-1\\/2 {
+                width: 100% !important;
+            }
+            
+            .md\\:pr-12 {
+                padding-right: 0 !important;
+            }
+            
+            .mb-8.md\\:mb-0 {
+                margin-bottom: 2rem !important;
+            }
+            
+            #about img {
+                margin-bottom: 2rem;
+            }
+            
+            /* Testimonials */
+            .grid.grid-cols-1.md\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonial-card {
+                padding: 1.5rem;
+            }
+            
+            /* Contact form */
+            .max-w-2xl {
+                max-width: 100% !important;
+            }
+            
+            #contact-form {
+                padding: 1.5rem;
+            }
+            
+            /* Footer mobile */
+            footer .flex-col.md\\:flex-row {
+                flex-direction: column;
+            }
+            
+            .mb-8.md\\:mb-0 {
+                margin-bottom: 2rem !important;
+                text-align: center;
+            }
+            
+            .mb-8.md\\:mb-0:last-child {
+                margin-bottom: 0 !important;
+            }
+            
+            /* Cart sidebar mobile */
+            .cart-sidebar {
+                width: 100%;
+            }
+            
+            .cart-item {
+                padding: 1rem 0;
+            }
+            
+            .cart-item img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            /* Order modal mobile */
+            .order-modal > div {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+            
+            /* Admin panel mobile */
+            .admin-sidebar {
+                width: 85%;
+            }
+            
+            .admin-content {
+                width: 100%;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .admin-table {
+                font-size: 0.75rem;
+            }
+            
+            .admin-table th, 
+            .admin-table td {
+                padding: 0.5rem;
+            }
+            
+            /* Boutons mobiles */
+            .btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Textes mobiles */
+            body {
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            /* Correction spécifique pour la navigation mobile */
+            #mobile-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Amélioration du padding sur tous les mobiles */
+            .container.mx-auto.px-4 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        /* Corrections pour très petits écrans (iPhone 5/SE) */
+        @media (max-width: 320px) {
+            .hero-section h1 {
+                font-size: 2rem !important;
+            }
+            
+            .hero-section h2 {
+                font-size: 1.2rem !important;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+            
+            .product-image-container {
+                height: 180px;
+            }
+        }
+
+        /* Correction des images responsives */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Empêcher le zoom sur les inputs sur iOS */
+        @media (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px;
+            }
+        }
+
+        /* Amélioration de la grille produits sur tablettes */
+        @media (min-width: 641px) and (max-width: 768px) {
+            #products-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* Ajustements fins pour l'iPhone */
+        @supports (-webkit-touch-callout: none) {
+            .hero-section {
+                height: 65vh;
+            }
+        }
+
+        /* Correction viewport iOS */
+        @media (max-width: 768px) {
+            .add-to-cart {
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Correction overflow horizontal */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="logo-container mr-3">
+                    <span>JEZY</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-black heading-font">Jezy Shopping</h1>
+                    <p class="text-xs text-gray-500">Mode & Élégance</p>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="text-black hover:text-yellow-500 font-medium transition-colors duration-300">Accueil</a>
+                <a href="#shop" class="text-black hover:text-yellow-500 font-medium transition-colors duration-300">Boutique</a>
+                <a href="#about" class="text-black hover:text-yellow-500 font-medium transition-colors duration-300">À propos</a>
+                <a href="#contact" class="text-black hover:text-yellow-500 font-medium transition-colors duration-300">Contact</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button id="cart-btn" class="relative">
+                    <i class="fas fa-shopping-bag text-xl text-black"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                
+                <button id="mobile-menu-btn" class="md:hidden text-black">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                
+                <button id="admin-login-btn" class="hidden md:block btn btn-secondary px-4 py-2">
+                    <i class="fas fa-user-shield mr-2"></i> Admin
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden bg-white shadow-lg hidden absolute w-full z-50">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#" class="text-black hover:text-yellow-500 font-medium py-2 border-b">Accueil</a>
+                <a href="#shop" class="text-black hover:text-yellow-500 font-medium py-2 border-b">Boutique</a>
+                <a href="#about" class="text-black hover:text-yellow-500 font-medium py-2 border-b">À propos</a>
+                <a href="#contact" class="text-black hover:text-yellow-500 font-medium py-2 border-b">Contact</a>
+                <button id="mobile-admin-login-btn" class="text-black hover:text-yellow-500 font-medium py-2 text-left">
+                    <i class="fas fa-user-shield mr-2"></i> Admin
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow" id="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section flex items-center justify-center text-center text-white">
+            <div class="container mx-auto px-4">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4 heading-font">Jezy Shopping</h1>
+                <h2 class="text-2xl md:text-4xl font-medium mb-8 heading-font">Mode & Élégance</h2>
+                <p class="text-xl mb-10 max-w-2xl mx-auto">Découvrez notre collection exclusive de vêtements et accessoires qui sublimeront votre style.</p>
+                <a href="#shop" class="btn btn-secondary px-8 py-4 text-lg font-bold">Découvrir la collection</a>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section id="shop" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-4 heading-font section-title">Nos Produits</h2>
+                <p class="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">Des pièces soigneusement sélectionnées pour votre garde-robe, alliant style, confort et qualité.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="products-grid">
+                    <!-- Product cards will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <button id="load-more" class="btn btn-primary px-8 py-3">Voir plus de produits</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-4 heading-font section-title">Pourquoi Nous Choisir</h2>
+                <p class="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">Une expérience de shopping exceptionnelle avec des avantages uniques</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <div class="fashion-icon mx-auto">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 heading-font">Livraison Rapide</h3>
+                        <p class="text-gray-600">Recevez vos commandes rapidement avec notre service de livraison express.</p>
+                    </div>
+                    
+                    <div class="text-center p-6">
+                        <div class="fashion-icon mx-auto">
+                            <i class="fas fa-undo-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 heading-font">Retours Faciles</h3>
+                        <p class="text-gray-600">Pas satisfait? Retournez vos articles facilement dans les 30 jours.</p>
+                    </div>
+                    
+                    <div class="text-center p-6">
+                        <div class="fashion-icon mx-auto">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 heading-font">Qualité Garantie</h3>
+                        <p class="text-gray-600">Tous nos produits sont soigneusement sélectionnés pour leur qualité supérieure.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12">
+                        <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="About Jezy Shopping" class="rounded-lg shadow-lg w-full">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-bold mb-6 heading-font">À propos de Jezy Shopping</h2>
+                        <p class="text-lg mb-4">Jezy Shopping est bien plus qu'une simple boutique en ligne. C'est une destination où le style rencontre la commodité, où chaque clic vous rapproche de votre garde-robe idéale.</p>
+                        <p class="text-lg mb-4">Notre mission est de vous offrir une expérience de shopping en ligne fluide, avec une sélection soigneusement choisie de vêtements et accessoires qui reflètent les dernières tendances tout en restant abordables.</p>
+                        <p class="text-lg mb-6">Que vous cherchiez une tenue pour une occasion spéciale ou simplement pour rafraîchir votre garde-robe quotidienne, Jezy Shopping a ce qu'il vous faut.</p>
+                        <a href="#shop" class="btn btn-accent px-6 py-3">Explorer notre collection</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-4 heading-font section-title">Témoignages</h2>
+                <p class="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">Découvrez ce que nos clients disent de leur expérience avec Jezy Shopping</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="testimonial-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold mr-4">S</div>
+                            <div>
+                                <h4 class="font-bold">Sarah M.</h4>
+                                <div class="flex text-yellow-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"J'ai adoré mon achat! La qualité est exceptionnelle et la livraison a été rapide. Je recommande vivement!"</p>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold mr-4">K</div>
+                            <div>
+                                <h4 class="font-bold">Kevin T.</h4>
+                                <div class="flex text-yellow-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Service client exceptionnel et produits de qualité. Je suis devenu un client fidèle!"</p>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold mr-4">A</div>
+                            <div>
+                                <h4 class="font-bold">Amélie L.</h4>
+                                <div class="flex text-yellow-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"La robe que j'ai commandée est magnifique! Elle est encore plus belle en vrai que sur la photo."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-4 heading-font section-title">Contactez-nous</h2>
+                <p class="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">Une question? N'hésitez pas à nous contacter, nous sommes là pour vous aider</p>
+                
+                <div class="max-w-2xl mx-auto bg-gray-50 rounded-xl p-8 shadow-md">
+                    <form id="contact-form">
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 font-medium mb-2">Nom</label>
+                            <input type="text" id="name" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+                            <textarea id="message" rows="4" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full py-4 font-bold">Envoyer via WhatsApp</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-8 md:mb-0">
+                    <div class="flex items-center mb-4">
+                        <div class="logo-container mr-3">
+                            <span>JEZY</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold heading-font">Jezy Shopping</h3>
+                            <p class="text-gray-400 text-sm">Mode & Élégance</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 max-w-xs">Habille tes rêves avec style et élégance. Découvrez notre collection exclusive de vêtements et accessoires.</p>
+                </div>
+                
+                <div class="mb-8 md:mb-0">
+                    <h4 class="text-lg font-bold mb-4 heading-font">Liens rapides</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors">Accueil</a></li>
+                        <li><a href="#shop" class="text-gray-400 hover:text-yellow-500 transition-colors">Boutique</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-yellow-500 transition-colors">À propos</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-yellow-500 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4 heading-font">Contact</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-yellow-500"></i>
+                            <span class="text-gray-400">+243 83 83 68 906</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-yellow-500"></i>
+                            <span class="text-gray-400">contact@jezyshopping.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fab fa-whatsapp mr-3 text-yellow-500"></i>
+                            <a href="https://wa.me/243838368906" class="text-gray-400 hover:text-yellow-500 transition-colors">WhatsApp</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Jezy Shopping. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="overlay" id="cart-overlay"></div>
+    <div class="fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-xl z-50 cart-sidebar" id="cart-sidebar">
+        <div class="p-6 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold heading-font">Votre Panier</h2>
+                <button id="close-cart" class="text-gray-500 hover:text-black">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex-grow overflow-y-auto mb-4" id="cart-items">
+                <!-- Cart items will be inserted here -->
+            </div>
+            
+            <div class="border-t pt-4">
+                <div class="flex justify-between mb-4">
+                    <span class="font-medium">Total:</span>
+                    <span id="cart-total" class="font-bold">0 €</span>
+                </div>
+                <button id="checkout-btn" class="btn btn-primary w-full py-4 font-bold">Passer la commande</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="overlay" id="order-overlay"></div>
+    <div class="fixed inset-0 flex items-center justify-center z-50 order-modal" id="order-modal">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 heading-font">Informations de livraison</h2>
+            <form id="order-form">
+                <div class="mb-4">
+                    <label for="customer-name" class="block text-gray-700 font-medium mb-2">Nom complet</label>
+                    <input type="text" id="customer-name" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                </div>
+                <div class="mb-4">
+                    <label for="customer-address" class="block text-gray-700 font-medium mb-2">Adresse de livraison</label>
+                    <textarea id="customer-address" rows="3" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="customer-phone" class="block text-gray-700 font-medium mb-2">Téléphone</label>
+                    <input type="tel" id="customer-phone" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-order" class="btn btn-secondary px-4 py-3">Annuler</button>
+                    <button type="submit" class="btn btn-primary px-4 py-3">Confirmer la commande</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="admin-login-modal">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 heading-font">Connexion Admin</h2>
+            <form id="admin-login-form">
+                <div class="mb-4">
+                    <label for="admin-password" class="block text-gray-700 font-medium mb-2">Mot de passe</label>
+                    <input type="password" id="admin-password" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input">
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-admin-login" class="btn btn-secondary px-4 py-3">Annuler</button>
+                    <button type="submit" class="btn btn-primary px-4 py-3">Se connecter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="fixed inset-0 bg-white z-50 hidden" id="admin-panel">
+        <div class="flex h-full">
+            <!-- Admin Sidebar -->
+            <div class="admin-sidebar bg-gray-800 text-white w-64 flex-shrink-0 overflow-y-auto">
+                <div class="p-4 border-b border-gray-700">
+                    <h2 class="text-xl font-bold heading-font">Panel Admin</h2>
+                    <p class="text-gray-400 text-sm">Gestion de la boutique</p>
+                </div>
+                
+                <nav class="p-4">
+                    <ul class="space-y-2">
+                        <li>
+                            <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-lg bg-gray-900 text-yellow-500" data-tab="dashboard">
+                                <i class="fas fa-chart-line mr-2"></i> Tableau de bord
+                            </button>
+                        </li>
+                        <li>
+                            <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700" data-tab="products">
+                                <i class="fas fa-box mr-2"></i> Gestion des produits
+                            </button>
+                        </li>
+                        <li>
+                            <button class="admin-nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700" data-tab="orders">
+                                <i class="fas fa-shopping-bag mr-2"></i> Commandes
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <div class="p-4 border-t border-gray-700 mt-auto">
+                    <button id="logout-admin" class="btn btn-secondary w-full">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Admin Content -->
+            <div class="admin-content flex-grow overflow-y-auto bg-gray-100">
+                <div class="p-6 border-b bg-white flex justify-between items-center">
+                    <h2 class="text-2xl font-bold heading-font" id="admin-content-title">Tableau de bord</h2>
+                    <button id="close-admin" class="text-gray-500 hover:text-black">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Dashboard Tab -->
+                    <div id="dashboard-tab" class="admin-tab">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="stat-card primary">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-sm opacity-80">Commandes totales</p>
+                                        <h3 class="text-2xl font-bold" id="total-orders">0</h3>
+                                    </div>
+                                    <i class="fas fa-shopping-bag text-xl opacity-80"></i>
+                                </div>
+                                <p class="text-sm mt-2 opacity-80">+12% ce mois</p>
+                            </div>
+                            
+                            <div class="stat-card success">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-sm opacity-80">Chiffre d'affaires</p>
+                                        <h3 class="text-2xl font-bold" id="total-revenue">0 €</h3>
+                                    </div>
+                                    <i class="fas fa-euro-sign text-xl opacity-80"></i>
+                                </div>
+                                <p class="text-sm mt-2 opacity-80">+8% ce mois</p>
+                            </div>
+                            
+                            <div class="stat-card warning">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-sm opacity-80">Produits en stock</p>
+                                        <h3 class="text-2xl font-bold" id="total-products">0</h3>
+                                    </div>
+                                    <i class="fas fa-boxes text-xl opacity-80"></i>
+                                </div>
+                                <p class="text-sm mt-2 opacity-80">+3 nouveaux ce mois</p>
+                            </div>
+                            
+                            <div class="stat-card danger">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-sm opacity-80">Panier moyen</p>
+                                        <h3 class="text-2xl font-bold" id="average-cart">0 €</h3>
+                                    </div>
+                                    <i class="fas fa-shopping-cart text-xl opacity-80"></i>
+                                </div>
+                                <p class="text-sm mt-2 opacity-80">+5% ce mois</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="admin-card p-6">
+                                <h3 class="text-xl font-bold mb-4 heading-font">Produits populaires</h3>
+                                <div id="popular-products">
+                                    <!-- Popular products will be inserted here -->
+                                </div>
+                            </div>
+                            
+                            <div class="admin-card p-6">
+                                <h3 class="text-xl font-bold mb-4 heading-font">Dernières commandes</h3>
+                                <div id="recent-orders">
+                                    <!-- Recent orders will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Products Management Tab -->
+                    <div id="products-tab" class="admin-tab hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold heading-font">Liste des produits</h3>
+                            <button id="add-product-btn" class="btn btn-primary">
+                                <i class="fas fa-plus mr-2"></i> Ajouter un produit
+                            </button>
+                        </div>
+                        
+                        <div class="admin-card overflow-x-auto">
+                            <table class="admin-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Nom</th>
+                                        <th>Prix</th>
+                                        <th>Livraison</th>
+                                        <th>Catégorie</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-products-list">
+                                    <!-- Products will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Orders Tab -->
+                    <div id="orders-tab" class="admin-tab hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold heading-font">Historique des commandes</h3>
+                        </div>
+                        
+                        <div class="admin-card overflow-x-auto">
+                            <table class="admin-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-orders-list">
+                                    <!-- Orders will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Add/Edit Product Modal -->
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="product-modal">
+                        <div class="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto shadow-2xl">
+                            <h2 class="text-2xl font-bold mb-6 heading-font" id="product-modal-title">Ajouter un produit</h2>
+                            <form id="product-form">
+                                <input type="hidden" id="product-id">
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="md:col-span-2">
+                                        <label for="product-name" class="block text-gray-700 font-medium mb-2">Nom du produit</label>
+                                        <input type="text" id="product-name" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label for="product-description" class="block text-gray-700 font-medium mb-2">Description</label>
+                                        <textarea id="product-description" rows="3" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input"></textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="product-price" class="block text-gray-700 font-medium mb-2">Prix (€)</label>
+                                        <input type="number" id="product-price" step="0.01" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="product-shipping" class="block text-gray-700 font-medium mb-2">Frais de livraison (€)</label>
+                                        <input type="number" id="product-shipping" step="0.01" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" required>
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label for="product-category" class="block text-gray-700 font-medium mb-2">Catégorie</label>
+                                        <select id="product-category" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input">
+                                            <option value="vetements">Vêtements</option>
+                                            <option value="accessoires">Accessoires</option>
+                                            <option value="chaussures">Chaussures</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="block text-gray-700 font-medium mb-2">Image du produit</label>
+                                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                                            <input type="file" id="product-image" class="hidden" accept="image/*">
+                                            <div id="image-preview-container" class="image-preview-container mb-4">
+                                                <!-- Image preview will be inserted here -->
+                                            </div>
+                                            <button type="button" id="upload-image-btn" class="btn btn-secondary">
+                                                <i class="fas fa-upload mr-2"></i> Choisir une image
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end space-x-4 mt-6">
+                                    <button type="button" id="cancel-product" class="btn btn-secondary px-4 py-3">Annuler</button>
+                                    <button type="submit" class="btn btn-primary px-4 py-3">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de données des produits (stockée dans localStorage)
+        let products = JSON.parse(localStorage.getItem('jezy-products')) || [
+            {
+                id: 1,
+                name: "Robe Élégante",
+                description: "Robe élégante pour toutes occasions",
+                price: 49.99,
+                shippingCost: 5.99,
+                category: "vetements",
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80"
+            },
+            {
+                id: 2,
+                name: "Sac à Main",
+                description: "Sac à main tendance et pratique",
+                price: 39.99,
+                shippingCost: 4.99,
+                category: "accessoires",
+                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80"
+            },
+            {
+                id: 3,
+                name: "Chaussures Confort",
+                description: "Chaussures confortables pour la ville",
+                price: 59.99,
+                shippingCost: 6.99,
+                category: "chaussures",
+                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=812&q=80"
+            },
+            {
+                id: 4,
+                name: "T-shirt Basique",
+                description: "T-shirt basique de qualité supérieure",
+                price: 19.99,
+                shippingCost: 3.99,
+                category: "vetements",
+                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"
+            }
+        ];
+
+        // Panier
+        let cart = JSON.parse(localStorage.getItem('jezy-cart')) || [];
+        
+        // Commandes
+        let orders = JSON.parse(localStorage.getItem('jezy-orders')) || [];
+        
+        // Éléments DOM
+        const productsGrid = document.getElementById('products-grid');
+        const cartCount = document.getElementById('cart-count');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartBtn = document.getElementById('cart-btn');
+        const closeCart = document.getElementById('close-cart');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const orderModal = document.getElementById('order-modal');
+        const orderOverlay = document.getElementById('order-overlay');
+        const orderForm = document.getElementById('order-form');
+        const cancelOrder = document.getElementById('cancel-order');
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const mobileAdminLoginBtn = document.getElementById('mobile-admin-login-btn');
+        const adminLoginModal = document.getElementById('admin-login-modal');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const cancelAdminLogin = document.getElementById('cancel-admin-login');
+        const adminPanel = document.getElementById('admin-panel');
+        const closeAdmin = document.getElementById('close-admin');
+        const logoutAdmin = document.getElementById('logout-admin');
+        const adminProductsList = document.getElementById('admin-products-list');
+        const addProductBtn = document.getElementById('add-product-btn');
+        const productModal = document.getElementById('product-modal');
+        const productForm = document.getElementById('product-form');
+        const cancelProduct = document.getElementById('cancel-product');
+        const productModalTitle = document.getElementById('product-modal-title');
+        const uploadImageBtn = document.getElementById('upload-image-btn');
+        const productImage = document.getElementById('product-image');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const contactForm = document.getElementById('contact-form');
+        const adminNavBtns = document.querySelectorAll('.admin-nav-btn');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const adminContentTitle = document.getElementById('admin-content-title');
+        const totalOrders = document.getElementById('total-orders');
+        const totalRevenue = document.getElementById('total-revenue');
+        const totalProducts = document.getElementById('total-products');
+        const averageCart = document.getElementById('average-cart');
+        const popularProducts = document.getElementById('popular-products');
+        const recentOrders = document.getElementById('recent-orders');
+        const adminOrdersList = document.getElementById('admin-orders-list');
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            displayProducts();
+            updateCartCount();
+            
+            // Sauvegarder les produits initiaux si nécessaire
+            if (!localStorage.getItem('jezy-products')) {
+                localStorage.setItem('jezy-products', JSON.stringify(products));
+            }
+        });
+        
+        // Afficher les produits
+        function displayProducts() {
+            productsGrid.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <div class="price-badge">
+                            ${product.price.toFixed(2)} €
+                        </div>
+                        <div class="category-badge">
+                            ${getCategoryName(product.category)}
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold mb-2 heading-font">${product.name}</h3>
+                        <p class="text-gray-600 mb-4">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500 text-sm">Livraison: ${product.shippingCost.toFixed(2)} €</span>
+                            <button class="btn btn-primary add-to-cart" data-id="${product.id}">
+                                <i class="fas fa-cart-plus mr-2"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+            });
+            
+            // Ajouter les événements aux boutons "Ajouter au panier"
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    addToCart(productId);
+                });
+            });
+        }
+        
+        // Obtenir le nom de la catégorie
+        function getCategoryName(category) {
+            switch(category) {
+                case 'vetements': return 'Vêtements';
+                case 'accessoires': return 'Accessoires';
+                case 'chaussures': return 'Chaussures';
+                default: return category;
+            }
+        }
+        
+        // Gestion du panier
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (product) {
+                const existingItem = cart.find(item => item.id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        quantity: 1
+                    });
+                }
+                
+                localStorage.setItem('jezy-cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartDisplay();
+                
+                // Animation du compteur
+                cartCount.classList.add('bounce');
+                setTimeout(() => {
+                    cartCount.classList.remove('bounce');
+                }, 1000);
+            }
+        }
+        
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            if (totalItems > 0) {
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+        
+        function updateCartDisplay() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-center text-gray-500">Votre panier est vide</p>';
+                cartTotal.textContent = '0 €';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item flex items-center py-4 border-b';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="ml-4 flex-grow">
+                        <h4 class="font-medium">${item.name}</h4>
+                        <p class="text-gray-600">${item.price.toFixed(2)} €</p>
+                        <div class="flex items-center mt-2">
+                            <button class="decrease-quantity text-gray-500 hover:text-black" data-id="${item.id}">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="increase-quantity text-gray-500 hover:text-black" data-id="${item.id}">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold">${itemTotal.toFixed(2)} €</p>
+                        <button class="remove-from-cart text-red-500 hover:text-red-700 mt-2" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = total.toFixed(2) + ' €';
+            
+            // Ajouter les événements aux boutons du panier
+            document.querySelectorAll('.increase-quantity').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    updateCartQuantity(productId, 1);
+                });
+            });
+            
+            document.querySelectorAll('.decrease-quantity').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    updateCartQuantity(productId, -1);
+                });
+            });
+            
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    removeFromCart(productId);
+                });
+            });
+        }
+        
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    localStorage.setItem('jezy-cart', JSON.stringify(cart));
+                    updateCartCount();
+                    updateCartDisplay();
+                }
+            }
+        }
+        
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('jezy-cart', JSON.stringify(cart));
+            updateCartCount();
+            updateCartDisplay();
+        }
+        
+        // Gestion de l'interface admin
+        function displayAdminProducts() {
+            adminProductsList.innerHTML = '';
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2">
+                        <img src="${product.image}" alt="${product.name}" class="w-12 h-12 object-cover rounded">
+                    </td>
+                    <td class="font-medium">${product.name}</td>
+                    <td>${product.price.toFixed(2)} €</td>
+                    <td>${product.shippingCost.toFixed(2)} €</td>
+                    <td>${getCategoryName(product.category)}</td>
+                    <td>
+                        <button class="edit-product btn btn-secondary px-3 py-1 mr-2" data-id="${product.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-product btn btn-danger px-3 py-1" data-id="${product.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                adminProductsList.appendChild(row);
+            });
+            
+            // Ajouter les événements aux boutons d'édition et suppression
+            document.querySelectorAll('.edit-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    editProduct(productId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    deleteProduct(productId);
+                });
+            });
+        }
+        
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (product) {
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-description').value = product.description;
+                document.getElementById('product-price').value = product.price;
+                document.getElementById('product-shipping').value = product.shippingCost;
+                document.getElementById('product-category').value = product.category;
+                
+                // Afficher l'image existante
+                imagePreviewContainer.innerHTML = `
+                    <div class="image-preview">
+                        <img src="${product.image}" alt="Preview">
+                        <div class="remove-image" onclick="clearImagePreview()">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                `;
+                
+                productModalTitle.textContent = 'Modifier le produit';
+                productModal.classList.remove('hidden');
+            }
+        }
+        
+        function deleteProduct(productId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+                products = products.filter(p => p.id !== productId);
+                localStorage.setItem('jezy-products', JSON.stringify(products));
+                displayProducts();
+                displayAdminProducts();
+                updateDashboard();
+            }
+        }
+        
+        function clearImagePreview() {
+            imagePreviewContainer.innerHTML = '';
+            productImage.value = '';
+        }
+        
+        // Fonction pour envoyer une commande via WhatsApp
+        function sendOrderToWhatsApp(orderDetails) {
+            const phoneNumber = "243838368906";
+            const message = `Nouvelle commande de ${orderDetails.name}%0A%0AAdresse: ${orderDetails.address}%0ATéléphone: ${orderDetails.phone}%0A%0AProduits:%0A${orderDetails.items}%0A%0ATotal: ${orderDetails.total} €`;
+            const url = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(url, '_blank');
+        }
+        
+        // Fonction pour envoyer un message de contact via WhatsApp
+        function sendContactToWhatsApp(contactDetails) {
+            const phoneNumber = "243838368906";
+            const message = `Nouveau message de contact%0A%0ANom: ${contactDetails.name}%0AEmail: ${contactDetails.email}%0A%0AMessage:%0A${contactDetails.message}`;
+            const url = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(url, '_blank');
+        }
+        
+        // Mettre à jour le tableau de bord admin
+        function updateDashboard() {
+            // Mettre à jour les statistiques
+            totalOrders.textContent = orders.length;
+            
+            const revenue = orders.reduce((total, order) => total + order.total, 0);
+            totalRevenue.textContent = revenue.toFixed(2) + ' €';
+            
+            totalProducts.textContent = products.length;
+            
+            const avgCart = orders.length > 0 ? revenue / orders.length : 0;
+            averageCart.textContent = avgCart.toFixed(2) + ' €';
+            
+            // Afficher les produits populaires
+            popularProducts.innerHTML = '';
+            if (products.length > 0) {
+                const popularProductsList = products.slice(0, 3);
+                popularProductsList.forEach(product => {
+                    const productEl = document.createElement('div');
+                    productEl.className = 'flex items-center py-2 border-b';
+                    productEl.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" class="w-10 h-10 object-cover rounded mr-3">
+                        <div class="flex-grow">
+                            <p class="font-medium">${product.name}</p>
+                            <p class="text-sm text-gray-600">${product.price.toFixed(2)} €</p>
+                        </div>
+                    `;
+                    popularProducts.appendChild(productEl);
+                });
+            } else {
+                popularProducts.innerHTML = '<p class="text-gray-500">Aucun produit disponible</p>';
+            }
+            
+            // Afficher les dernières commandes
+            recentOrders.innerHTML = '';
+            if (orders.length > 0) {
+                const recentOrdersList = orders.slice(-3).reverse();
+                recentOrdersList.forEach(order => {
+                    const orderEl = document.createElement('div');
+                    orderEl.className = 'flex justify-between items-center py-2 border-b';
+                    orderEl.innerHTML = `
+                        <div>
+                            <p class="font-medium">${order.name}</p>
+                            <p class="text-sm text-gray-600">${new Date(order.date).toLocaleDateString()}</p>
+                        </div>
+                        <span class="font-bold">${order.total.toFixed(2)} €</span>
+                    `;
+                    recentOrders.appendChild(orderEl);
+                });
+            } else {
+                recentOrders.innerHTML = '<p class="text-gray-500">Aucune commande récente</p>';
+            }
+            
+            // Afficher la liste complète des commandes
+            adminOrdersList.innerHTML = '';
+            if (orders.length > 0) {
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="py-2">#${order.id}</td>
+                        <td>${order.name}</td>
+                        <td>${new Date(order.date).toLocaleDateString()}</td>
+                        <td>${order.total.toFixed(2)} €</td>
+                        <td><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Complétée</span></td>
+                    `;
+                    adminOrdersList.appendChild(row);
+                });
+            } else {
+                adminOrdersList.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-gray-500">Aucune commande enregistrée</td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Événements
+        cartBtn.addEventListener('click', function() {
+            updateCartDisplay();
+            cartSidebar.classList.add('active');
+            cartOverlay.classList.add('active');
+        });
+        
+        closeCart.addEventListener('click', function() {
+            cartSidebar.classList.remove('active');
+            cartOverlay.classList.remove('active');
+        });
+        
+        cartOverlay.addEventListener('click', function() {
+            cartSidebar.classList.remove('active');
+            cartOverlay.classList.remove('active');
+        });
+        
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Votre panier est vide');
+                return;
+            }
+            
+            orderModal.classList.add('active');
+            orderOverlay.classList.add('active');
+        });
+        
+        orderOverlay.addEventListener('click', function() {
+            orderModal.classList.remove('active');
+            orderOverlay.classList.remove('active');
+        });
+        
+        cancelOrder.addEventListener('click', function() {
+            orderModal.classList.remove('active');
+            orderOverlay.classList.remove('active');
+        });
+        
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('customer-name').value;
+            const address = document.getElementById('customer-address').value;
+            const phone = document.getElementById('customer-phone').value;
+            
+            // Préparer les détails de la commande
+            let itemsText = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                itemsText += `- ${item.name} (x${item.quantity}): ${itemTotal.toFixed(2)} €%0A`;
+            });
+            
+            const orderDetails = {
+                name: name,
+                address: address,
+                phone: phone,
+                items: itemsText,
+                total: total.toFixed(2)
+            };
+            
+            // Enregistrer la commande
+            const orderId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+            orders.push({
+                id: orderId,
+                name: name,
+                address: address,
+                phone: phone,
+                items: cart,
+                total: parseFloat(total.toFixed(2)),
+                date: new Date().toISOString()
+            });
+            
+            localStorage.setItem('jezy-orders', JSON.stringify(orders));
+            
+            // Envoyer la commande via WhatsApp
+            sendOrderToWhatsApp(orderDetails);
+            
+            // Vider le panier
+            cart = [];
+            localStorage.setItem('jezy-cart', JSON.stringify(cart));
+            updateCartCount();
+            updateCartDisplay();
+            
+            // Fermer les modals
+            cartSidebar.classList.remove('active');
+            cartOverlay.classList.remove('active');
+            orderModal.classList.remove('active');
+            orderOverlay.classList.remove('active');
+            
+            // Réinitialiser le formulaire
+            orderForm.reset();
+            
+            // Mettre à jour le dashboard si l'admin est connecté
+            if (adminPanel.classList.contains('hidden') === false) {
+                updateDashboard();
+            }
+        });
+        
+        adminLoginBtn.addEventListener('click', function() {
+            adminLoginModal.classList.remove('hidden');
+        });
+        
+        mobileAdminLoginBtn.addEventListener('click', function() {
+            adminLoginModal.classList.remove('hidden');
+            mobileMenu.classList.add('hidden');
+        });
+        
+        cancelAdminLogin.addEventListener('click', function() {
+            adminLoginModal.classList.add('hidden');
+        });
+        
+        adminLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            
+            if (password === '1234') {
+                adminLoginModal.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+                displayAdminProducts();
+                updateDashboard();
+            } else {
+                alert('Mot de passe incorrect');
+            }
+        });
+        
+        closeAdmin.addEventListener('click', function() {
+            adminPanel.classList.add('hidden');
+        });
+        
+        logoutAdmin.addEventListener('click', function() {
+            adminPanel.classList.add('hidden');
+        });
+        
+        // Navigation dans l'admin
+        adminNavBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.getAttribute('data-tab');
+                
+                // Mettre à jour les boutons actifs
+                adminNavBtns.forEach(b => {
+                    b.classList.remove('bg-gray-900', 'text-yellow-500');
+                    b.classList.add('hover:bg-gray-700');
+                });
+                this.classList.add('bg-gray-900', 'text-yellow-500');
+                this.classList.remove('hover:bg-gray-700');
+                
+                // Afficher l'onglet sélectionné
+                adminTabs.forEach(t => {
+                    t.classList.add('hidden');
+                });
+                document.getElementById(`${tab}-tab`).classList.remove('hidden');
+                
+                // Mettre à jour le titre
+                switch(tab) {
+                    case 'dashboard':
+                        adminContentTitle.textContent = 'Tableau de bord';
+                        break;
+                    case 'products':
+                        adminContentTitle.textContent = 'Gestion des produits';
+                        break;
+                    case 'orders':
+                        adminContentTitle.textContent = 'Historique des commandes';
+                        break;
+                }
+            });
+        });
+        
+        addProductBtn.addEventListener('click', function() {
+            productForm.reset();
+            document.getElementById('product-id').value = '';
+            imagePreviewContainer.innerHTML = '';
+            productModalTitle.textContent = 'Ajouter un produit';
+            productModal.classList.remove('hidden');
+        });
+        
+        cancelProduct.addEventListener('click', function() {
+            productModal.classList.add('hidden');
+        });
+        
+        uploadImageBtn.addEventListener('click', function() {
+            productImage.click();
+        });
+        
+        productImage.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreviewContainer.innerHTML = `
+                        <div class="image-preview">
+                            <img src="${e.target.result}" alt="Preview">
+                            <div class="remove-image" onclick="clearImagePreview()">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    `;
+                };
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const shippingCost = parseFloat(document.getElementById('product-shipping').value);
+            const category = document.getElementById('product-category').value;
+            
+            // Utiliser l'image existante ou une image par défaut
+            let image = 'https://via.placeholder.com/300x300?text=Produit';
+            const imagePreview = imagePreviewContainer.querySelector('img');
+            if (imagePreview) {
+                image = imagePreview.src;
+            }
+            
+            if (productId) {
+                // Modification d'un produit existant
+                const index = products.findIndex(p => p.id === parseInt(productId));
+                if (index !== -1) {
+                    products[index] = {
+                        ...products[index],
+                        name,
+                        description,
+                        price,
+                        shippingCost,
+                        category,
+                        image
+                    };
+                }
+            } else {
+                // Ajout d'un nouveau produit
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({
+                    id: newId,
+                    name,
+                    description,
+                    price,
+                    shippingCost,
+                    category,
+                    image
+                });
+            }
+            
+            localStorage.setItem('jezy-products', JSON.stringify(products));
+            displayProducts();
+            displayAdminProducts();
+            updateDashboard();
+            productModal.classList.add('hidden');
+        });
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Fermer le menu mobile en cliquant sur un lien
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Gestion du formulaire de contact
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            const contactDetails = {
+                name: name,
+                email: email,
+                message: message
+            };
+            
+            // Envoyer le message via WhatsApp
+            sendContactToWhatsApp(contactDetails);
+            
+            // Réinitialiser le formulaire
+            contactForm.reset();
+        });
+        
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
