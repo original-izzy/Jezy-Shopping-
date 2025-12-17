@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inclure Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #000000;
@@ -248,7 +250,7 @@
         }
         
         .cart-sidebar.active {
-            transform: translateY(0);
+            transform: translateX(0);
         }
         
         /* Overlay */
@@ -265,6 +267,35 @@
         
         .overlay.active {
             display: block;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #10B981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            align-items: center;
+        }
+        
+        .notification.error {
+            background-color: #EF4444;
+        }
+        
+        .notification.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
@@ -588,16 +619,9 @@
                                     </div>
                                     
                                     <div class="md:col-span-2">
-                                        <label class="block text-gray-700 font-medium mb-2">Image du produit</label>
-                                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                                            <input type="file" id="product-image" class="hidden" accept="image/*">
-                                            <div id="image-preview-container" class="image-preview-container mb-4">
-                                                <!-- Image preview will be inserted here -->
-                                            </div>
-                                            <button type="button" id="upload-image-btn" class="btn btn-secondary">
-                                                <i class="fas fa-upload mr-2"></i> Choisir une image
-                                            </button>
-                                        </div>
+                                        <label class="block text-gray-700 font-medium mb-2">Image du produit (URL)</label>
+                                        <input type="text" id="product-image-url" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 form-input" placeholder="https://example.com/image.jpg" required>
+                                        <p class="text-sm text-gray-500 mt-1">Insérez l'URL de l'image du produit</p>
                                     </div>
                                 </div>
                                 
@@ -613,62 +637,24 @@
         </div>
     </div>
 
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notification-message"></span>
+    </div>
+
     <script>
-        // Fonction pour déclencher la mise à jour Netlify
-        function triggerNetlifyBuild() {
-            fetch('https://api.netlify.com/build_hooks/6941d5c669d01fb27b70dec8', {
-                method: 'POST',
-            })
-            .then(() => {
-                console.log('Mise à jour du site lancée avec succès !');
-                alert('Produit enregistré ! La mise à jour du site pour tous les visiteurs est en cours...');
-            })
-            .catch((error) => {
-                console.error('Erreur lors de la mise à jour :', error);
-                alert('Produit enregistré localement. Une erreur est survenue lors de la mise à jour globale.');
-            });
-        }
+        // --- CONFIGURATION SUPABASE ---
+        const SUPABASE_URL = 'https://lbgyaefrslhepuvcdshd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxiZ3lhZWZyc2xoZXB1dmNkc2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4MjYwNzAsImV4cCI6MjA1MjQwMjA3MH0.ucDlfqTtqOaA8zQ4r16CbFvGuhpeclgPYu5R1aLUhJk';
+        const BUILD_HOOK = 'https://api.netlify.com/build_hooks/6941d5c669d01fb27b70dec8';
 
-        // Base de données des produits (stockée dans localStorage)
-        let products = JSON.parse(localStorage.getItem('jezy-products')) || [
-            {
-                id: 1,
-                name: "Robe Élégante",
-                description: "Robe élégante pour toutes occasions",
-                price: 49.99,
-                shippingCost: 5.99,
-                category: "vetements",
-                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80"
-            },
-            {
-                id: 2,
-                name: "Sac à Main",
-                description: "Sac à main tendance et pratique",
-                price: 39.99,
-                shippingCost: 4.99,
-                category: "accessoires",
-                image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80"
-            },
-            {
-                id: 3,
-                name: "Chaussures Confort",
-                description: "Chaussures confortables pour la ville",
-                price: 59.99,
-                shippingCost: 6.99,
-                category: "chaussures",
-                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=812&q=80"
-            },
-            {
-                id: 4,
-                name: "T-shirt Basique",
-                description: "T-shirt basique de qualité supérieure",
-                price: 19.99,
-                shippingCost: 3.99,
-                category: "vetements",
-                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"
-            }
-        ];
+        // Initialiser Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Base de données des produits (stockée dans localStorage comme cache)
+        let products = JSON.parse(localStorage.getItem('jezy-products')) || [];
+        
         // Panier
         let cart = JSON.parse(localStorage.getItem('jezy-cart')) || [];
         
@@ -695,26 +681,166 @@
         const productForm = document.getElementById('product-form');
         const cancelProduct = document.getElementById('cancel-product');
         const productModalTitle = document.getElementById('product-modal-title');
-        const uploadImageBtn = document.getElementById('upload-image-btn');
-        const productImage = document.getElementById('product-image');
-        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         
+        // Fonction pour afficher une notification
+        function showNotification(message, isError = false) {
+            notificationMessage.textContent = message;
+            notification.className = 'notification show';
+            if (isError) {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('error');
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Fonction pour déclencher la mise à jour du site Netlify
+        async function triggerNetlifyBuild() {
+            try {
+                const response = await fetch(BUILD_HOOK, {
+                    method: 'POST',
+                });
+                
+                if (response.ok) {
+                    console.log('Mise à jour du site lancée avec succès !');
+                    showNotification('Site mis à jour pour tous les visiteurs !');
+                } else {
+                    console.error('Erreur lors de la mise à jour :', response.statusText);
+                    showNotification('Erreur lors de la mise à jour du site', true);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour :', error);
+                showNotification('Erreur lors de la mise à jour du site', true);
+            }
+        }
+        
+        // Charger les produits depuis Supabase
+        async function loadProductsFromSupabase() {
+            try {
+                // Afficher un indicateur de chargement
+                productsGrid.innerHTML = '<div class="col-span-full text-center py-8"><div class="spinner mx-auto"></div><p class="mt-4">Chargement des produits...</p></div>';
+                
+                const { data, error } = await supabase
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                products = data || [];
+                
+                // Sauvegarder dans le cache local
+                localStorage.setItem('jezy-products', JSON.stringify(products));
+                
+                // Mettre à jour l'affichage
+                displayProducts();
+                
+                // Mettre à jour la liste admin si le panel est ouvert
+                if (!adminPanel.classList.contains('hidden')) {
+                    displayAdminProducts();
+                }
+                
+            } catch (error) {
+                console.error('Erreur lors du chargement des produits:', error);
+                showNotification('Erreur de chargement des produits', true);
+                
+                // Utiliser le cache local en cas d'erreur
+                products = JSON.parse(localStorage.getItem('jezy-products')) || [];
+                displayProducts();
+            }
+        }
+        
+        // Sauvegarder un produit dans Supabase
+        async function saveProductToSupabase(product, isNew = true) {
+            try {
+                let result;
+                
+                if (isNew) {
+                    // Ajouter un nouveau produit
+                    const { data, error } = await supabase
+                        .from('products')
+                        .insert([product])
+                        .select();
+                    
+                    if (error) throw error;
+                    result = data[0];
+                } else {
+                    // Mettre à jour un produit existant
+                    const { data, error } = await supabase
+                        .from('products')
+                        .update(product)
+                        .eq('id', product.id)
+                        .select();
+                    
+                    if (error) throw error;
+                    result = data[0];
+                }
+                
+                // Recharger les produits depuis Supabase
+                await loadProductsFromSupabase();
+                
+                // Déclencher la mise à jour du site pour tous les visiteurs
+                await triggerNetlifyBuild();
+                
+                return result;
+                
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde du produit:', error);
+                showNotification('Erreur lors de la sauvegarde du produit', true);
+                throw error;
+            }
+        }
+        
+        // Supprimer un produit de Supabase
+        async function deleteProductFromSupabase(productId) {
+            try {
+                const { error } = await supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', productId);
+                
+                if (error) throw error;
+                
+                // Recharger les produits depuis Supabase
+                await loadProductsFromSupabase();
+                
+                // Déclencher la mise à jour du site pour tous les visiteurs
+                await triggerNetlifyBuild();
+                
+            } catch (error) {
+                console.error('Erreur lors de la suppression du produit:', error);
+                showNotification('Erreur lors de la suppression du produit', true);
+                throw error;
+            }
+        }
+        
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
-            displayProducts();
+            // Charger les produits depuis Supabase au démarrage
+            loadProductsFromSupabase();
             updateCartCount();
-            
-            // Sauvegarder les produits initiaux si nécessaire
-            if (!localStorage.getItem('jezy-products')) {
-                localStorage.setItem('jezy-products', JSON.stringify(products));
-            }
         });
         
         // Afficher les produits
         function displayProducts() {
             productsGrid.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-box-open text-5xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">Aucun produit disponible pour le moment</p>
+                    </div>
+                `;
+                return;
+            }
             
             products.forEach(product => {
                 const productCard = document.createElement('div');
@@ -778,6 +904,8 @@
                 setTimeout(() => {
                     cartCount.classList.remove('bounce');
                 }, 1000);
+                
+                showNotification('Produit ajouté au panier !');
             }
         }
         
@@ -881,11 +1009,23 @@
             localStorage.setItem('jezy-cart', JSON.stringify(cart));
             updateCartCount();
             updateCartDisplay();
+            showNotification('Produit retiré du panier');
         }
         
         // Gestion de l'interface admin
         function displayAdminProducts() {
             adminProductsList.innerHTML = '';
+            
+            if (products.length === 0) {
+                adminProductsList.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-500">
+                            Aucun produit disponible. Cliquez sur "Ajouter un produit" pour commencer.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
             products.forEach(product => {
                 const row = document.createElement('tr');
@@ -935,37 +1075,22 @@
                 document.getElementById('product-price').value = product.price;
                 document.getElementById('product-shipping').value = product.shippingCost;
                 document.getElementById('product-category').value = product.category;
-                
-                // Afficher l'image existante
-                imagePreviewContainer.innerHTML = `
-                    <div class="image-preview">
-                        <img src="${product.image}" alt="Preview">
-                        <div class="remove-image" onclick="clearImagePreview()">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    </div>
-                `;
+                document.getElementById('product-image-url').value = product.image;
                 
                 productModalTitle.textContent = 'Modifier le produit';
                 productModal.classList.remove('hidden');
             }
         }
         
-        function deleteProduct(productId) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-                products = products.filter(p => p.id !== productId);
-                localStorage.setItem('jezy-products', JSON.stringify(products));
-                displayProducts();
-                displayAdminProducts();
-                
-                // Déclencher la mise à jour Netlify après suppression
-                triggerNetlifyBuild();
+        async function deleteProduct(productId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.')) {
+                try {
+                    await deleteProductFromSupabase(productId);
+                    showNotification('Produit supprimé avec succès');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression:', error);
+                }
             }
-        }
-        
-        function clearImagePreview() {
-            imagePreviewContainer.innerHTML = '';
-            productImage.value = '';
         }
         
         // Événements
@@ -998,16 +1123,18 @@
             adminLoginModal.classList.add('hidden');
         });
         
-        adminLoginForm.addEventListener('submit', function(e) {
+        adminLoginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const password = document.getElementById('admin-password').value;
             
+            // Mot de passe admin (à changer en production)
             if (password === '1234') {
                 adminLoginModal.classList.add('hidden');
                 adminPanel.classList.remove('hidden');
-                displayAdminProducts();
+                await loadProductsFromSupabase();
+                showNotification('Connecté en tant qu\'administrateur');
             } else {
-                alert('Mot de passe incorrect');
+                showNotification('Mot de passe incorrect', true);
             }
         });
         
@@ -1017,12 +1144,12 @@
         
         logoutAdmin.addEventListener('click', function() {
             adminPanel.classList.add('hidden');
+            showNotification('Déconnexion réussie');
         });
         
         addProductBtn.addEventListener('click', function() {
             productForm.reset();
             document.getElementById('product-id').value = '';
-            imagePreviewContainer.innerHTML = '';
             productModalTitle.textContent = 'Ajouter un produit';
             productModal.classList.remove('hidden');
         });
@@ -1031,30 +1158,7 @@
             productModal.classList.add('hidden');
         });
         
-        uploadImageBtn.addEventListener('click', function() {
-            productImage.click();
-        });
-        
-        productImage.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    imagePreviewContainer.innerHTML = `
-                        <div class="image-preview">
-                            <img src="${e.target.result}" alt="Preview">
-                            <div class="remove-image" onclick="clearImagePreview()">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                    `;
-                };
-                
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-        
-        productForm.addEventListener('submit', function(e) {
+        productForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const productId = document.getElementById('product-id').value;
@@ -1063,49 +1167,39 @@
             const price = parseFloat(document.getElementById('product-price').value);
             const shippingCost = parseFloat(document.getElementById('product-shipping').value);
             const category = document.getElementById('product-category').value;
+            const image = document.getElementById('product-image-url').value;
             
-            // Utiliser l'image existante ou une image par défaut
-            let image = 'https://via.placeholder.com/300x300?text=Produit';
-            const imagePreview = imagePreviewContainer.querySelector('img');
-            if (imagePreview) {
-                image = imagePreview.src;
+            // Validation
+            if (!name || !price || !shippingCost || !image) {
+                showNotification('Veuillez remplir tous les champs obligatoires', true);
+                return;
             }
             
-            if (productId) {
-                // Modification d'un produit existant
-                const index = products.findIndex(p => p.id === parseInt(productId));
-                if (index !== -1) {
-                    products[index] = {
-                        ...products[index],
-                        name,
-                        description,
-                        price,
-                        shippingCost,
-                        category,
-                        image
-                    };
+            const productData = {
+                name,
+                description,
+                price,
+                shippingCost,
+                category,
+                image
+            };
+            
+            try {
+                if (productId) {
+                    // Modification d'un produit existant
+                    productData.id = parseInt(productId);
+                    await saveProductToSupabase(productData, false);
+                    showNotification('Produit modifié avec succès');
+                } else {
+                    // Ajout d'un nouveau produit
+                    await saveProductToSupabase(productData, true);
+                    showNotification('Produit ajouté avec succès');
                 }
-            } else {
-                // Ajout d'un nouveau produit
-                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.push({
-                    id: newId,
-                    name,
-                    description,
-                    price,
-                    shippingCost,
-                    category,
-                    image
-                });
+                
+                productModal.classList.add('hidden');
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde:', error);
             }
-            
-            localStorage.setItem('jezy-products', JSON.stringify(products));
-            displayProducts();
-            displayAdminProducts();
-            productModal.classList.add('hidden');
-            
-            // Déclencher la mise à jour Netlify après sauvegarde
-            triggerNetlifyBuild();
         });
         
         mobileMenuBtn.addEventListener('click', function() {
@@ -1138,4 +1232,4 @@
         });
     </script>
 </body>
-    </html>
+                            </html>
